@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CV Forge AI - Professional Resume Builder</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              display: ['Space Grotesk', 'sans-serif'],
+            },
+            colors: {
+              neo: {
+                yellow: '#FEF08A', // Yellow-200ish but brighter
+                yellowDark: '#FACC15',
+                blue: '#BFDBFE',
+                blueDark: '#60A5FA',
+                pink: '#FBCFE8',
+                pinkDark: '#F472B6',
+                green: '#BBF7D0',
+                white: '#FFFFFF',
+                black: '#000000',
+              }
+            },
+            boxShadow: {
+              'neo': '4px 4px 0px 0px rgba(0,0,0,1)',
+              'neo-sm': '2px 2px 0px 0px rgba(0,0,0,1)',
+              'neo-lg': '8px 8px 0px 0px rgba(0,0,0,1)',
+            }
+          },
+        },
+      }
+    </script>
+    <style>
+      body {
+        background-color: #fdfbf7;
+        background-image: radial-gradient(#000000 1px, transparent 1px);
+        background-size: 20px 20px;
+      }
+
+      /* Scrollbar styling */
+      ::-webkit-scrollbar {
+        width: 12px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-left: 2px solid black;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #000;
+        border: 2px solid #f1f1f1;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #333;
+      }
+
+      @media print {
+        @page { 
+          margin: 0; 
+          size: auto;
+        }
+        
+        body { 
+          margin: 0; 
+          padding: 0; 
+          background: white !important;
+          background-image: none !important;
+          -webkit-print-color-adjust: exact !important; 
+          print-color-adjust: exact !important;
+          color: black !important;
+        }
+        
+        /* Hide UI elements */
+        nav, 
+        button, 
+        .no-print, 
+        .hidden-print { 
+          display: none !important; 
+        }
+        
+        /* Reset Main Application Layout */
+        #root, 
+        .min-h-screen, 
+        main { 
+          display: block !important; 
+          width: 100% !important; 
+          height: auto !important; 
+          margin: 0 !important; 
+          padding: 0 !important; 
+          overflow: visible !important;
+          position: static !important;
+        }
+
+        /* Disable sticky positioning which causes issues in print */
+        .sticky { 
+          position: static !important; 
+        }
+        
+        /* Target the Preview wrapper */
+        .print-area {
+          display: block !important;
+          width: 100% !important;
+          max-width: 100% !important;
+          margin: 0 !important;
+          padding: 0 !important;
+          box-shadow: none !important;
+          border: none !important;
+          position: static !important;
+          background: white !important;
+        }
+
+        /* The actual CV content container */
+        #cv-preview {
+          width: 100% !important;
+          max-width: none !important;
+          margin: 0 !important;
+          padding: 10mm 15mm !important; /* Top/Bottom 10mm, Left/Right 15mm */
+          box-shadow: none !important;
+          border: none !important;
+          min-height: 0 !important;
+          height: auto !important;
+          overflow: visible !important;
+        }
+
+        /* Typography fixes */
+        a { text-decoration: none !important; color: black !important; }
+        
+        /* Page Break Management */
+        h1, h2, h3 { 
+          page-break-after: avoid; 
+          break-after: avoid; 
+        }
+        
+        section { 
+          page-break-inside: auto; 
+          break-inside: auto;
+        }
+        
+        .break-avoid {
+          page-break-inside: avoid;
+          break-inside: avoid;
+        }
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "docx": "https://esm.sh/docx@8.5.0",
+    "file-saver": "https://esm.sh/file-saver@2.0.5"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body class="text-gray-900">
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
