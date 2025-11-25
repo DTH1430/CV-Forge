@@ -10,9 +10,10 @@ interface EditorProps {
   data: CVData;
   onChange: (data: CVData) => void;
   language: Language;
+  darkMode?: boolean;
 }
 
-const EditorComponent: React.FC<EditorProps> = ({ data, onChange, language }) => {
+const EditorComponent: React.FC<EditorProps> = ({ data, onChange, language, darkMode = false }) => {
   const [activeSections, setActiveSections] = useState<string[]>(['personal']);
   const [loadingAI, setLoadingAI] = useState<Record<string, boolean>>({});
   const t = translations[language];
@@ -160,43 +161,43 @@ const EditorComponent: React.FC<EditorProps> = ({ data, onChange, language }) =>
   const SectionHeader = useCallback(({ title, isOpen, onClick }: { title: string, isOpen: boolean, onClick: () => void }) => (
     <button
       onClick={onClick}
-      className={`w-full flex items-center justify-between p-4 border-b-2 border-black transition-colors ${isOpen ? 'bg-neo-yellow' : 'bg-white hover:bg-gray-50'}`}
+      className={`w-full flex items-center justify-between p-4 border-b-2 border-black transition-colors ${darkMode ? 'bg-gray-800 text-gray-200' : isOpen ? 'bg-neo-yellow' : 'bg-white hover:bg-gray-50'}`}
     >
-      <span className="font-bold uppercase tracking-wider text-black font-display">{title}</span>
-      <div className={`border-2 border-black p-1 bg-white ${isOpen ? 'rotate-180' : ''} transition-transform`}>
+      <span className={`font-bold uppercase tracking-wider ${darkMode ? 'text-gray-200' : 'text-black'} font-display`}>{title}</span>
+      <div className={`border-2 border-black p-1 ${darkMode ? 'bg-gray-700' : 'bg-white'} ${isOpen ? 'rotate-180' : ''} transition-transform`}>
         {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
       </div>
     </button>
-  ), []);
+  ), [darkMode]);
 
   const InputLabel = useCallback(({ label, tooltip }: { label: string, tooltip?: string }) => (
     <div className="flex items-center gap-2 mb-1.5">
-      <label className="block text-xs font-bold uppercase tracking-wide text-gray-700">{label}</label>
+      <label className={`block text-xs font-bold uppercase tracking-wide ${darkMode ? 'text-gray-400' : 'text-gray-700'}`}>{label}</label>
       {tooltip && (
         <div className="group relative">
-          <HelpCircle className="w-3.5 h-3.5 text-gray-400 hover:text-black cursor-help transition-colors" />
-          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-black text-white text-xs font-medium normal-case shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] hidden group-hover:block z-50 pointer-events-none text-center border-2 border-white">
+          <HelpCircle className={`w-3.5 h-3.5 ${darkMode ? 'text-gray-500 hover:text-gray-300' : 'text-gray-400 hover:text-black'} cursor-help transition-colors`} />
+          <div className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 ${darkMode ? 'bg-gray-800 text-gray-200' : 'bg-black text-white'} text-xs font-medium normal-case shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] hidden group-hover:block z-50 pointer-events-none text-center border-2 border-white`}>
             {tooltip}
-            <div className="absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-black"></div>
+            <div className={`absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] ${darkMode ? 'border-t-gray-800' : 'border-t-black'}`}></div>
           </div>
         </div>
       )}
     </div>
-  ), []);
+  ), [darkMode]);
 
   const NeoInput = useCallback((props: React.InputHTMLAttributes<HTMLInputElement>) => (
     <input
       {...props}
-      className={`w-full px-3 py-2 border-2 border-black font-medium focus:outline-none focus:bg-neo-blue/20 focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all ${props.className || ''}`}
+      className={`w-full px-3 py-2 border-2 border-black font-medium focus:outline-none focus:${darkMode ? 'bg-gray-700' : 'bg-neo-blue/20'} focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all ${darkMode ? 'bg-gray-800 text-gray-200 border-gray-700' : ''} ${props.className || ''}`}
     />
-  ), []);
+  ), [darkMode]);
 
   const NeoTextArea = useCallback((props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) => (
     <textarea
       {...props}
-      className={`w-full px-3 py-2 border-2 border-black font-medium focus:outline-none focus:bg-neo-blue/20 focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all ${props.className || ''}`}
+      className={`w-full px-3 py-2 border-2 border-black font-medium focus:outline-none focus:${darkMode ? 'bg-gray-700' : 'bg-neo-blue/20'} focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all ${darkMode ? 'bg-gray-800 text-gray-200 border-gray-700' : ''} ${props.className || ''}`}
     />
-  ), []);
+  ), [darkMode]);
 
   return (
     <div className="space-y-6">
@@ -207,6 +208,41 @@ const EditorComponent: React.FC<EditorProps> = ({ data, onChange, language }) =>
         
         {activeSections.includes('personal') && (
           <div className="p-5 grid grid-cols-1 md:grid-cols-2 gap-5 animate-in slide-in-from-top-2 duration-200">
+            <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-[120px_1fr] gap-4 items-start">
+              <div className="flex-shrink-0">
+                {data.personalInfo.profilePicture ? (
+                  <img
+                    src={data.personalInfo.profilePicture}
+                    alt="Profile"
+                    className="w-24 h-24 rounded object-cover border-2 border-black shadow-neo-sm"
+                  />
+                ) : (
+                  <div className="w-24 h-24 bg-gray-200 border-2 border-dashed border-gray-400 rounded flex items-center justify-center">
+                    <span className="text-gray-500 text-xs text-center">No image</span>
+                  </div>
+                )}
+              </div>
+              <div className="flex-grow">
+                <InputLabel label={t.profilePicture} />
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onload = (event) => {
+                        if (event.target?.result) {
+                          updateField('personalInfo', 'profilePicture', event.target.result as string);
+                        }
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  }}
+                  className={`w-full px-3 py-2 border-2 border-black font-medium focus:outline-none focus:${darkMode ? 'bg-gray-700' : 'bg-neo-blue/20'} focus:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all ${darkMode ? 'bg-gray-800 text-gray-200 border-gray-700' : ''}`}
+                />
+              </div>
+            </div>
             <div className="md:col-span-2">
               <InputLabel label={t.fullName} tooltip={t.tipFullName} />
               <NeoInput
@@ -284,7 +320,7 @@ const EditorComponent: React.FC<EditorProps> = ({ data, onChange, language }) =>
           <div className="p-5 animate-in slide-in-from-top-2 duration-200">
             <div className="flex justify-between items-center mb-3">
                <span className="text-xs font-bold text-gray-500 uppercase">{t.brieflyDescribe}</span>
-               <AIButton onClick={handleGenerateSummary} isLoading={loadingAI.summary} label={t.generate} />
+               <AIButton onClick={handleGenerateSummary} isLoading={loadingAI.summary} label={t.generate} darkMode={darkMode} />
             </div>
             <NeoTextArea
               value={data.summary}
@@ -304,9 +340,9 @@ const EditorComponent: React.FC<EditorProps> = ({ data, onChange, language }) =>
           <div className="p-5 space-y-6 animate-in slide-in-from-top-2 duration-200">
              {data.experience.map((exp) => (
                 <div key={exp.id} className="relative p-4 border-2 border-black bg-neo-white shadow-neo-sm group">
-                    <button 
+                    <button
                         onClick={() => removeExperience(exp.id)}
-                        className="absolute top-0 right-0 p-2 border-l-2 border-b-2 border-black bg-neo-pink hover:bg-red-400 text-black transition-colors"
+                        className={`absolute top-0 right-0 p-2 border-l-2 border-b-2 ${darkMode ? 'border-gray-500 bg-pink-700 hover:bg-pink-600 text-white' : 'border-black bg-neo-pink hover:bg-red-400 text-black'} transition-colors`}
                         title={t.removeExperience}
                     >
                         <Trash2 className="w-4 h-4" />
@@ -361,23 +397,24 @@ const EditorComponent: React.FC<EditorProps> = ({ data, onChange, language }) =>
                                         onChange={(e) => updateExperience(exp.id, 'current', e.target.checked)}
                                         className="sr-only peer"
                                     />
-                                    <div className="w-5 h-5 border-2 border-black bg-white peer-checked:bg-neo-green transition-colors"></div>
-                                    {exp.current && <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                        <div className="w-2 h-2 bg-black"></div>
+                                    <div className={`${darkMode ? 'bg-gray-800 border-gray-600 peer-checked:bg-gray-600' : 'bg-white border-black peer-checked:bg-neo-green'} w-5 h-5 border-2 transition-colors`}></div>
+                                    {exp.current && <div className={`absolute inset-0 flex items-center justify-center pointer-events-none ${darkMode ? 'bg-gray-200' : ''}`}>
+                                        <div className={`w-2 h-2 ${darkMode ? 'bg-gray-800' : 'bg-black'}`}></div>
                                     </div>}
                                 </div>
-                                <span className="text-xs font-bold uppercase whitespace-nowrap">{t.current}</span>
+                                <span className={`text-xs font-bold uppercase whitespace-nowrap ${darkMode ? 'text-gray-200' : ''}`}>{t.current}</span>
                             </label>
                         </div>
                     </div>
                     <div>
                         <div className="flex justify-between items-center mb-2">
                             <InputLabel label={t.description} />
-                             <AIButton 
-                                onClick={() => handleEnhanceExp(exp.id, exp.description)} 
-                                isLoading={loadingAI[`exp-${exp.id}`]} 
+                             <AIButton
+                                onClick={() => handleEnhanceExp(exp.id, exp.description)}
+                                isLoading={loadingAI[`exp-${exp.id}`]}
                                 label={t.enhance}
                                 minimal
+                                darkMode={darkMode}
                             />
                         </div>
                         <NeoTextArea
@@ -391,7 +428,7 @@ const EditorComponent: React.FC<EditorProps> = ({ data, onChange, language }) =>
              ))}
              <button
                 onClick={addExperience}
-                className="w-full py-3 border-2 border-dashed border-black bg-gray-50 hover:bg-neo-green/50 transition-colors flex items-center justify-center gap-2 font-bold uppercase tracking-wide text-sm"
+                className={`${darkMode ? 'border-gray-500 bg-gray-700 hover:bg-green-600/50 text-white' : 'border-black bg-gray-50 hover:bg-neo-green/50'} w-full py-3 border-2 border-dashed transition-colors flex items-center justify-center gap-2 font-bold uppercase tracking-wide text-sm`}
             >
                 <Plus className="w-5 h-5" /> {t.addExperience}
             </button>
@@ -407,9 +444,9 @@ const EditorComponent: React.FC<EditorProps> = ({ data, onChange, language }) =>
           <div className="p-5 space-y-6 animate-in slide-in-from-top-2 duration-200">
              {data.education.map((edu) => (
                 <div key={edu.id} className="relative p-4 border-2 border-black bg-neo-white shadow-neo-sm">
-                     <button 
+                     <button
                         onClick={() => removeEducation(edu.id)}
-                        className="absolute top-0 right-0 p-2 border-l-2 border-b-2 border-black bg-neo-pink hover:bg-red-400 text-black transition-colors"
+                        className={`absolute top-0 right-0 p-2 border-l-2 border-b-2 ${darkMode ? 'border-gray-500 bg-pink-700 hover:bg-pink-600 text-white' : 'border-black bg-neo-pink hover:bg-red-400 text-black'} transition-colors`}
                         title={t.removeEducation}
                     >
                         <Trash2 className="w-4 h-4" />
@@ -452,7 +489,7 @@ const EditorComponent: React.FC<EditorProps> = ({ data, onChange, language }) =>
              ))}
               <button
                 onClick={addEducation}
-                className="w-full py-3 border-2 border-dashed border-black bg-gray-50 hover:bg-neo-green/50 transition-colors flex items-center justify-center gap-2 font-bold uppercase tracking-wide text-sm"
+                className={`${darkMode ? 'border-gray-500 bg-gray-700 hover:bg-green-600/50 text-white' : 'border-black bg-gray-50 hover:bg-neo-green/50'} w-full py-3 border-2 border-dashed transition-colors flex items-center justify-center gap-2 font-bold uppercase tracking-wide text-sm`}
             >
                 <Plus className="w-5 h-5" /> {t.addEducation}
             </button>
@@ -468,9 +505,9 @@ const EditorComponent: React.FC<EditorProps> = ({ data, onChange, language }) =>
           <div className="p-5 space-y-6 animate-in slide-in-from-top-2 duration-200">
               {data.projects.map((proj) => (
                 <div key={proj.id} className="relative p-4 border-2 border-black bg-neo-white shadow-neo-sm">
-                    <button 
+                    <button
                         onClick={() => removeProject(proj.id)}
-                        className="absolute top-0 right-0 p-2 border-l-2 border-b-2 border-black bg-neo-pink hover:bg-red-400 text-black transition-colors"
+                        className={`absolute top-0 right-0 p-2 border-l-2 border-b-2 ${darkMode ? 'border-gray-500 bg-pink-700 hover:bg-pink-600 text-white' : 'border-black bg-neo-pink hover:bg-red-400 text-black'} transition-colors`}
                         title={t.removeProject}
                     >
                         <Trash2 className="w-4 h-4" />
@@ -525,23 +562,24 @@ const EditorComponent: React.FC<EditorProps> = ({ data, onChange, language }) =>
                                         onChange={(e) => updateProject(proj.id, 'current', e.target.checked)}
                                         className="sr-only peer"
                                     />
-                                    <div className="w-5 h-5 border-2 border-black bg-white peer-checked:bg-neo-green transition-colors"></div>
-                                    {proj.current && <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                                        <div className="w-2 h-2 bg-black"></div>
+                                    <div className={`${darkMode ? 'bg-gray-800 border-gray-600 peer-checked:bg-gray-600' : 'bg-white border-black peer-checked:bg-neo-green'} w-5 h-5 border-2 transition-colors`}></div>
+                                    {proj.current && <div className={`absolute inset-0 flex items-center justify-center pointer-events-none ${darkMode ? 'bg-gray-200' : ''}`}>
+                                        <div className={`w-2 h-2 ${darkMode ? 'bg-gray-800' : 'bg-black'}`}></div>
                                     </div>}
                                 </div>
-                                <span className="text-xs font-bold uppercase whitespace-nowrap">{t.current}</span>
+                                <span className={`text-xs font-bold uppercase whitespace-nowrap ${darkMode ? 'text-gray-200' : ''}`}>{t.current}</span>
                             </label>
                         </div>
                     </div>
                     <div>
                         <div className="flex justify-between items-center mb-2">
                             <InputLabel label={t.description} />
-                              <AIButton 
-                                onClick={() => handleEnhanceProject(proj.id, proj.description)} 
-                                isLoading={loadingAI[`proj-${proj.id}`]} 
+                              <AIButton
+                                onClick={() => handleEnhanceProject(proj.id, proj.description)}
+                                isLoading={loadingAI[`proj-${proj.id}`]}
                                 label={t.enhance}
                                 minimal
+                                darkMode={darkMode}
                             />
                         </div>
                         <NeoTextArea
@@ -555,7 +593,7 @@ const EditorComponent: React.FC<EditorProps> = ({ data, onChange, language }) =>
               ))}
               <button
                 onClick={addProject}
-                className="w-full py-3 border-2 border-dashed border-black bg-gray-50 hover:bg-neo-green/50 transition-colors flex items-center justify-center gap-2 font-bold uppercase tracking-wide text-sm"
+                className={`${darkMode ? 'border-gray-500 bg-gray-700 hover:bg-green-600/50 text-white' : 'border-black bg-gray-50 hover:bg-neo-green/50'} w-full py-3 border-2 border-dashed transition-colors flex items-center justify-center gap-2 font-bold uppercase tracking-wide text-sm`}
             >
                 <Plus className="w-5 h-5" /> {t.addProject}
             </button>
@@ -571,7 +609,7 @@ const EditorComponent: React.FC<EditorProps> = ({ data, onChange, language }) =>
             <div className="p-5 animate-in slide-in-from-top-2 duration-200">
                 <div className="flex justify-between items-center mb-3">
                     <span className="text-xs font-bold text-gray-500 uppercase">{t.separateSkills}</span>
-                    <AIButton onClick={handleSuggestSkills} isLoading={loadingAI.skills} label={t.suggest} />
+                    <AIButton onClick={handleSuggestSkills} isLoading={loadingAI.skills} label={t.suggest} darkMode={darkMode} />
                 </div>
                 <NeoTextArea
                     value={data.skills.join(', ')}

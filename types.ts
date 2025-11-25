@@ -39,6 +39,7 @@ export interface CVData {
     linkedin: string;
     twitter: string;
     github: string;
+    profilePicture?: string; // URL or base64 image data
   };
   summary: string;
   experience: Experience[];
@@ -57,6 +58,7 @@ export const getEmptyCVData = (): CVData => ({
     linkedin: '',
     twitter: '',
     github: '',
+    profilePicture: '',
   },
   summary: '',
   experience: [],
