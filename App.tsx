@@ -18,7 +18,7 @@ const App: React.FC = () => {
     }
   });
 
-  const [language, setLanguage] = useState<Language>('vi');
+  const [language, setLanguage] = useState<Language>('en');
   const [showPreviewMobile, setShowPreviewMobile] = useState(false);
   const [isExportingDocx, setIsExportingDocx] = useState(false);
   // Key to force re-render of Editor on reset
@@ -178,7 +178,7 @@ const App: React.FC = () => {
               </div>
 
               <div className="print-area">
-                <Preview data={cvData} language={language} />
+                <Preview data={cvData} language={language} onChange={setCvData} />
               </div>
 
               <p className="text-center text-xs font-bold uppercase tracking-widest text-gray-500 mt-8 no-print bg-white/50 inline-block px-2 mx-auto w-full">
