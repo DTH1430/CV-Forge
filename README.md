@@ -47,10 +47,9 @@ Because every modern project needs a little AI duct tape:
 ---
 
 ## Tech Stack
-- **Next.js**, because I’m not original  
 - **React**, because what else would it be  
 - **Tailwind**, because writing CSS manually would require self-respect  
-- AI (OpenAI, Gemini, whatever didn’t rate-limit me)
+- **AI** (Gemini — not because I'm loyal, but because it's the only key I own and it's so absurdly easy to use that my skill issue barely shows)
 
 ---
 
