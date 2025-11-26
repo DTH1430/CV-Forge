@@ -25,7 +25,6 @@ const TemplateWrapper: React.FC = () => {
   const [showPreviewMobile, setShowPreviewMobile] = useState(false);
   const [isExportingDocx, setIsExportingDocx] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isMouseInDropdownArea, setIsMouseInDropdownArea] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [isExportDropdownOpen, setIsExportDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -52,26 +51,6 @@ const TemplateWrapper: React.FC = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
-
-  // Handle dropdown closing based on mouse movement
-  useEffect(() => {
-    let timeoutId: NodeJS.Timeout;
-
-    if (isDropdownOpen && !isMouseInDropdownArea) {
-      timeoutId = setTimeout(() => {
-        setIsDropdownOpen(false);
-      }, 200);
-    }
-
-    return () => {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-    };
-  }, [isDropdownOpen, isMouseInDropdownArea]);
-
-  // Handle export dropdown closing based on mouse movement
-  // This useEffect is no longer needed since we're handling it with mouse events
 
   // Close export dropdown when clicking outside
   useEffect(() => {
@@ -216,13 +195,10 @@ const TemplateWrapper: React.FC = () => {
               <div
                 className="relative"
                 ref={dropdownRef}
-                onMouseEnter={() => setIsMouseInDropdownArea(true)}
-                onMouseLeave={() => setIsMouseInDropdownArea(false)}
               >
                 <button
                   className={`${darkMode ? 'bg-gray-800 text-gray-200 border-gray-600 hover:bg-gray-700' : 'bg-white text-black border-black'} flex items-center gap-2 px-3 sm:px-4 py-2 text-sm font-bold border-2 shadow-neo hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all`}
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  onMouseEnter={() => setIsDropdownOpen(true)}
                   aria-expanded={isDropdownOpen}
                   aria-haspopup="true"
                 >
@@ -232,8 +208,6 @@ const TemplateWrapper: React.FC = () => {
                 {isDropdownOpen && (
                   <div
                     className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-black'} absolute right-0 mt-1 w-48 border-2 shadow-neo z-50`}
-                    onMouseEnter={() => setIsMouseInDropdownArea(true)}
-                    onMouseLeave={() => setIsMouseInDropdownArea(false)}
                   >
                     <button
                       onClick={() => { handleTemplateChange('modern'); setIsDropdownOpen(false); }}
@@ -308,11 +282,6 @@ const TemplateWrapper: React.FC = () => {
                 <div
                   className="relative"
                   ref={exportDropdownRef}
-                  onMouseEnter={() => setIsExportDropdownOpen(true)}
-                  onMouseLeave={() => {
-                    // Use a timeout to allow time to move to the dropdown
-                    setTimeout(() => setIsExportDropdownOpen(false), 200);
-                  }}
                 >
                   <button
                     onClick={() => setIsExportDropdownOpen(!isExportDropdownOpen)}
@@ -326,8 +295,6 @@ const TemplateWrapper: React.FC = () => {
                   {isExportDropdownOpen && (
                     <div
                       className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-black'} absolute right-0 mt-1 w-56 border-2 shadow-neo z-50`}
-                      onMouseEnter={() => setIsExportDropdownOpen(true)}
-                      onMouseLeave={() => setIsExportDropdownOpen(false)}
                     >
                       <button
                         onClick={async (e) => { e.stopPropagation(); await handleExportPDF('standard'); setIsExportDropdownOpen(false); }}
