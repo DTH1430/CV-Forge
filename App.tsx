@@ -161,8 +161,46 @@ const TemplateWrapper: React.FC = () => {
     setTemplate(newTemplate);
   };
 
+  // Add custom styles for the AI text animation
+  const aiTextStyle = `
+    .ai-text-gradient {
+      background: linear-gradient(135deg, #ec4899, #f43f5e, #db2777, #e11d48, #c026d5, #a21caf, #7c3aed, #6d28d9, #5b21b6, #3b82f6, #2563eb, #1d4ed8, #0ea5e9, #0284c7, #0369a1, #10b981, #059669, #047857, #8b5cf6, #a855f7, #c084fc, #e879f9, #ec4899);
+      background-size: 1000% 1000%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
+      display: inline-block;
+      animation: gradientShift 12s ease infinite, textGlow 2s ease-in-out infinite;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+    }
+
+
+
+
+
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      25% { background-position: 25% 50%; }
+      50% { background-position: 50% 50%; }
+      75% { background-position: 75% 50%; }
+      100% { background-position: 100% 50%; }
+    }
+
+    @keyframes textGlow {
+      0% { text-shadow: 0 0 8px rgba(255, 255, 255, 0.5); }
+      50% { text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 20px rgba(200, 150, 255, 0.6); }
+      100% { text-shadow: 0 0 8px rgba(255, 255, 255, 0.5); }
+    }
+  `;
+
   return (
-    <div className={`min-h-screen flex flex-col font-sans ${darkMode ? 'dark bg-gray-900 text-gray-200' : ''}`}>
+    <>
+      <style>{aiTextStyle}</style>
+      <div className={`min-h-screen flex flex-col font-sans ${darkMode ? 'dark bg-gray-900 text-gray-200' : ''}`}>
       {/* Navbar */}
       <nav className={`${darkMode ? 'bg-gray-900 border-gray-700' : 'bg-neo-white border-b-4 border-black'} sticky top-0 z-50 no-print`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -174,10 +212,10 @@ const TemplateWrapper: React.FC = () => {
                 <FileText className="w-6 h-6" />
               </div>
               <span className={`text-2xl font-black ${darkMode ? 'text-gray-200' : 'text-neo-black'} tracking-tighter uppercase font-display hidden sm:inline`}>
-                CV Forge <span className={`${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>AI</span>
+                CV Forge <span className="ai-text-gradient">AI</span>
               </span>
               <span className={`text-xl font-black ${darkMode ? 'text-gray-200' : 'text-neo-black'} tracking-tighter uppercase font-display sm:hidden`}>
-                CV <span className={`${darkMode ? 'text-blue-400' : 'text-blue-600'}`}>AI</span>
+                CV <span className="ai-text-gradient">AI</span>
               </span>
             </div>
 
@@ -348,7 +386,16 @@ const TemplateWrapper: React.FC = () => {
         {/* Editor Column */}
         <div className={`w-full md:w-5/12 lg:w-1/3 flex-col gap-6 no-print ${showPreviewMobile ? 'hidden md:flex' : 'flex'} ${darkMode ? 'bg-gray-900' : ''}`}>
           <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-neo-blue border-2 border-black'} shadow-neo p-4 mb-4`}>
-            <h3 className={`text-lg font-black uppercase font-display ${darkMode ? 'text-gray-200 border-gray-600' : 'border-b-2 border-black'} pb-2 mb-2`}>{t.aiPowered}</h3>
+            <h3 className={`text-lg font-black uppercase font-display ${darkMode ? 'text-gray-200 border-gray-600' : 'border-b-2 border-black'} pb-2 mb-2`}>
+              {language === 'en'
+                ? (
+                  <><span className="ai-text-gradient">AI</span> 'Powered'</>
+                )
+                : (
+                  <>Hỗ trợ bởi <span className="ai-text-gradient">AI</span></>
+                )
+              }
+            </h3>
             <p className={`text-sm font-medium ${darkMode ? 'text-gray-400' : 'text-gray-800'}`}>
               {t.aiDescription}
             </p>
@@ -375,6 +422,7 @@ const TemplateWrapper: React.FC = () => {
 
       </main>
     </div>
+    </>
   );
 };
 
