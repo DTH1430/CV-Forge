@@ -265,6 +265,30 @@ const TemplateWrapper: React.FC = () => {
                     >
                       {t.minimalTemplate}
                     </button>
+                    <button
+                      onClick={() => { handleTemplateChange('academic'); setIsDropdownOpen(false); }}
+                      className={`w-full text-left px-4 py-2 text-sm font-bold ${darkMode ? 'hover:bg-gray-700 text-gray-200' : 'hover:bg-neo-blue text-black'} ${template === 'academic' ? (darkMode ? 'bg-gray-700' : 'bg-neo-blue') : ''}`}
+                    >
+                      {t.academicTemplate}
+                    </button>
+                    <button
+                      onClick={() => { handleTemplateChange('creative'); setIsDropdownOpen(false); }}
+                      className={`w-full text-left px-4 py-2 text-sm font-bold ${darkMode ? 'hover:bg-gray-700 text-gray-200' : 'hover:bg-neo-blue text-black'} ${template === 'creative' ? (darkMode ? 'bg-gray-700' : 'bg-neo-blue') : ''}`}
+                    >
+                      {t.creativeTemplate}
+                    </button>
+                    <button
+                      onClick={() => { handleTemplateChange('corporate'); setIsDropdownOpen(false); }}
+                      className={`w-full text-left px-4 py-2 text-sm font-bold ${darkMode ? 'hover:bg-gray-700 text-gray-200' : 'hover:bg-neo-blue text-black'} ${template === 'corporate' ? (darkMode ? 'bg-gray-700' : 'bg-neo-blue') : ''}`}
+                    >
+                      {t.corporateTemplate}
+                    </button>
+                    <button
+                      onClick={() => { handleTemplateChange('technical'); setIsDropdownOpen(false); }}
+                      className={`w-full text-left px-4 py-2 text-sm font-bold ${darkMode ? 'hover:bg-gray-700 text-gray-200' : 'hover:bg-neo-blue text-black'} ${template === 'technical' ? (darkMode ? 'bg-gray-700' : 'bg-neo-blue') : ''}`}
+                    >
+                      {t.technicalTemplate}
+                    </button>
                   </div>
                 )}
               </div>

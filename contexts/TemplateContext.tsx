@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { CVData, Language } from '../types';
 
-export type TemplateType = 'modern' | 'classic' | 'minimal';
+export type TemplateType = 'modern' | 'classic' | 'minimal' | 'academic' | 'creative' | 'corporate' | 'technical';
 
 interface TemplateContextType {
   template: TemplateType;
