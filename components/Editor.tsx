@@ -91,27 +91,27 @@ const EditorComponent: React.FC<EditorProps> = ({ data, onChange, language, dark
   }, [data, onChange]);
 
   const addEducation = useCallback(() => {
-      const newEdu: Education = {
-        id: crypto.randomUUID(),
-        institution: '',
-        degree: '',
-        startDate: '',
-        endDate: '',
-        current: false,
-        description: ''
-      };
-      onChange({ ...data, education: [newEdu, ...data.education] });
+    const newEdu: Education = {
+      id: crypto.randomUUID(),
+      institution: '',
+      degree: '',
+      startDate: '',
+      endDate: '',
+      current: false,
+      description: ''
+    };
+    onChange({ ...data, education: [newEdu, ...data.education] });
   }, [data, onChange]);
 
   const removeEducation = useCallback((id: string) => {
-      onChange({ ...data, education: data.education.filter(e => e.id !== id) });
+    onChange({ ...data, education: data.education.filter(e => e.id !== id) });
   }, [data, onChange]);
 
   const updateEducation = useCallback((id: string, field: keyof Education, value: any) => {
-      onChange({
-        ...data,
-        education: data.education.map(e => e.id === id ? { ...e, [field]: value } : e)
-      });
+    onChange({
+      ...data,
+      education: data.education.map(e => e.id === id ? { ...e, [field]: value } : e)
+    });
   }, [data, onChange]);
 
   const addProject = useCallback(() => {
@@ -162,10 +162,11 @@ const EditorComponent: React.FC<EditorProps> = ({ data, onChange, language, dark
     <button
       onClick={onClick}
       className={`w-full flex items-center justify-between p-4 border-b-2 border-black transition-colors ${darkMode ? 'bg-gray-800 text-gray-200' : isOpen ? 'bg-neo-yellow' : 'bg-white hover:bg-gray-50'}`}
+      aria-expanded={isOpen}
     >
       <span className={`font-bold uppercase tracking-wider ${darkMode ? 'text-gray-200' : 'text-black'} font-display`}>{title}</span>
       <div className={`border-2 border-black p-1 ${darkMode ? 'bg-gray-700' : 'bg-white'} ${isOpen ? 'rotate-180' : ''} transition-transform`}>
-        {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+        {isOpen ? <ChevronUp className="w-4 h-4" aria-hidden="true" /> : <ChevronDown className="w-4 h-4" aria-hidden="true" />}
       </div>
     </button>
   ), [darkMode]);
@@ -175,8 +176,9 @@ const EditorComponent: React.FC<EditorProps> = ({ data, onChange, language, dark
       <label className={`block text-xs font-bold uppercase tracking-wide ${darkMode ? 'text-gray-400' : 'text-gray-700'}`}>{label}</label>
       {tooltip && (
         <div className="group relative">
-          <HelpCircle className={`w-3.5 h-3.5 ${darkMode ? 'text-gray-500 hover:text-gray-300' : 'text-gray-400 hover:text-black'} cursor-help transition-colors`} />
-          <div className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 ${darkMode ? 'bg-gray-800 text-gray-200' : 'bg-black text-white'} text-xs font-medium normal-case shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] hidden group-hover:block z-50 pointer-events-none text-center border-2 border-white`}>
+          <span className="sr-only">{tooltip}</span>
+          <HelpCircle className={`w-3.5 h-3.5 ${darkMode ? 'text-gray-500 hover:text-gray-300' : 'text-gray-400 hover:text-black'} cursor-help transition-colors`} aria-hidden="true" />
+          <div className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 ${darkMode ? 'bg-gray-800 text-gray-200' : 'bg-black text-white'} text-xs font-medium normal-case shadow-[4px_4px_0px_0px_rgba(255,255,255,1)] hidden group-hover:block z-50 pointer-events-none text-center border-2 border-white`} aria-hidden="true">
             {tooltip}
             <div className={`absolute top-full left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] ${darkMode ? 'border-t-gray-800' : 'border-t-black'}`}></div>
           </div>
@@ -201,11 +203,11 @@ const EditorComponent: React.FC<EditorProps> = ({ data, onChange, language, dark
 
   return (
     <div className="space-y-6">
-      
+
       {/* Personal Info Section */}
       <div className="border-2 border-black bg-white shadow-neo">
         <SectionHeader title={t.personalDetails} isOpen={activeSections.includes('personal')} onClick={() => toggleSection('personal')} />
-        
+
         {activeSections.includes('personal') && (
           <div className="p-5 grid grid-cols-1 md:grid-cols-2 gap-5 animate-in slide-in-from-top-2 duration-200">
             <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-[120px_1fr] gap-4 items-start">
@@ -284,7 +286,7 @@ const EditorComponent: React.FC<EditorProps> = ({ data, onChange, language, dark
                 placeholder={t.phWebsite}
               />
             </div>
-             <div>
+            <div>
               <InputLabel label={t.linkedin} tooltip={t.tipLinkedin} />
               <NeoInput
                 value={data.personalInfo.linkedin}
@@ -292,7 +294,7 @@ const EditorComponent: React.FC<EditorProps> = ({ data, onChange, language, dark
                 placeholder={t.phLinkedin}
               />
             </div>
-             <div>
+            <div>
               <InputLabel label={t.twitter} tooltip={t.tipTwitter} />
               <NeoInput
                 value={data.personalInfo.twitter}
@@ -300,7 +302,7 @@ const EditorComponent: React.FC<EditorProps> = ({ data, onChange, language, dark
                 placeholder={t.phTwitter}
               />
             </div>
-             <div>
+            <div>
               <InputLabel label={t.github} tooltip={t.tipGithub} />
               <NeoInput
                 value={data.personalInfo.github}
@@ -315,12 +317,12 @@ const EditorComponent: React.FC<EditorProps> = ({ data, onChange, language, dark
       {/* Summary Section */}
       <div className="border-2 border-black bg-white shadow-neo">
         <SectionHeader title={t.summary} isOpen={activeSections.includes('summary')} onClick={() => toggleSection('summary')} />
-        
+
         {activeSections.includes('summary') && (
           <div className="p-5 animate-in slide-in-from-top-2 duration-200">
             <div className="flex justify-between items-center mb-3">
-               <span className="text-xs font-bold text-gray-500 uppercase">{t.brieflyDescribe}</span>
-               <AIButton onClick={handleGenerateSummary} isLoading={loadingAI.summary} label={t.generate} darkMode={darkMode} />
+              <span className="text-xs font-bold text-gray-500 uppercase">{t.brieflyDescribe}</span>
+              <AIButton onClick={handleGenerateSummary} isLoading={loadingAI.summary} label={t.generate} darkMode={darkMode} />
             </div>
             <NeoTextArea
               value={data.summary}
@@ -335,267 +337,267 @@ const EditorComponent: React.FC<EditorProps> = ({ data, onChange, language, dark
       {/* Experience Section */}
       <div className="border-2 border-black bg-white shadow-neo">
         <SectionHeader title={t.experience} isOpen={activeSections.includes('experience')} onClick={() => toggleSection('experience')} />
-        
+
         {activeSections.includes('experience') && (
           <div className="p-5 space-y-6 animate-in slide-in-from-top-2 duration-200">
-             {data.experience.map((exp) => (
-                <div key={exp.id} className="relative p-4 border-2 border-black bg-neo-white shadow-neo-sm group">
-                    <button
-                        onClick={() => removeExperience(exp.id)}
-                        className={`absolute top-0 right-0 p-2 border-l-2 border-b-2 ${darkMode ? 'border-gray-500 bg-pink-700 hover:bg-pink-600 text-white' : 'border-black bg-neo-pink hover:bg-red-400 text-black'} transition-colors`}
-                        title={t.removeExperience}
-                    >
-                        <Trash2 className="w-4 h-4" />
-                    </button>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 pr-8 mt-2">
-                        <div>
-                            <InputLabel label={t.position} />
-                            <NeoInput 
-                                value={exp.position} 
-                                onChange={(e) => updateExperience(exp.id, 'position', e.target.value)}
-                                placeholder={t.phJobTitle}
-                            />
-                        </div>
-                        <div>
-                            <InputLabel label={t.company} />
-                            <NeoInput 
-                                value={exp.company} 
-                                onChange={(e) => updateExperience(exp.id, 'company', e.target.value)}
-                                placeholder={t.phCompany}
-                            />
-                        </div>
-                        
-                        {/* Start Date */}
-                        <div className="flex flex-col justify-end">
-                            <InputLabel label={t.startDate} />
-                            <NeoInput 
-                                type="month"
-                                value={exp.startDate} 
-                                onChange={(e) => updateExperience(exp.id, 'startDate', e.target.value)}
-                            />
-                        </div>
+            {data.experience.map((exp) => (
+              <div key={exp.id} className="relative p-4 border-2 border-black bg-neo-white shadow-neo-sm group">
+                <button
+                  onClick={() => removeExperience(exp.id)}
+                  className={`absolute top-0 right-0 p-2 border-l-2 border-b-2 ${darkMode ? 'border-gray-500 bg-pink-700 hover:bg-pink-600 text-white' : 'border-black bg-neo-pink hover:bg-red-400 text-black'} transition-colors`}
+                  title={t.removeExperience}
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 pr-8 mt-2">
+                  <div>
+                    <InputLabel label={t.position} />
+                    <NeoInput
+                      value={exp.position}
+                      onChange={(e) => updateExperience(exp.id, 'position', e.target.value)}
+                      placeholder={t.phJobTitle}
+                    />
+                  </div>
+                  <div>
+                    <InputLabel label={t.company} />
+                    <NeoInput
+                      value={exp.company}
+                      onChange={(e) => updateExperience(exp.id, 'company', e.target.value)}
+                      placeholder={t.phCompany}
+                    />
+                  </div>
 
-                        {/* End Date - Fixed alignment */}
-                        <div className="flex flex-col justify-end min-w-0">
-                            <InputLabel label={t.endDate} />
-                            <NeoInput 
-                                type="month"
-                                value={exp.endDate} 
-                                disabled={exp.current}
-                                onChange={(e) => updateExperience(exp.id, 'endDate', e.target.value)}
-                                className="disabled:bg-gray-200 disabled:text-gray-500 disabled:border-gray-400 w-full"
-                            />
-                        </div>
+                  {/* Start Date */}
+                  <div className="flex flex-col justify-end">
+                    <InputLabel label={t.startDate} />
+                    <NeoInput
+                      type="month"
+                      value={exp.startDate}
+                      onChange={(e) => updateExperience(exp.id, 'startDate', e.target.value)}
+                    />
+                  </div>
 
-                        {/* Current Checkbox - New Row */}
-                        <div className="md:col-span-2">
-                            <label className="flex items-center gap-2 cursor-pointer select-none w-max">
-                                <div className="relative">
-                                    <input
-                                        type="checkbox"
-                                        checked={exp.current}
-                                        onChange={(e) => updateExperience(exp.id, 'current', e.target.checked)}
-                                        className="sr-only peer"
-                                    />
-                                    <div className={`${darkMode ? 'bg-gray-800 border-gray-600 peer-checked:bg-gray-600' : 'bg-white border-black peer-checked:bg-neo-green'} w-5 h-5 border-2 transition-colors`}></div>
-                                    {exp.current && <div className={`absolute inset-0 flex items-center justify-center pointer-events-none ${darkMode ? 'bg-gray-200' : ''}`}>
-                                        <div className={`w-2 h-2 ${darkMode ? 'bg-gray-800' : 'bg-black'}`}></div>
-                                    </div>}
-                                </div>
-                                <span className={`text-xs font-bold uppercase whitespace-nowrap ${darkMode ? 'text-gray-200' : ''}`}>{t.current}</span>
-                            </label>
-                        </div>
-                    </div>
-                    <div>
-                        <div className="flex justify-between items-center mb-2">
-                            <InputLabel label={t.description} />
-                             <AIButton
-                                onClick={() => handleEnhanceExp(exp.id, exp.description)}
-                                isLoading={loadingAI[`exp-${exp.id}`]}
-                                label={t.enhance}
-                                minimal
-                                darkMode={darkMode}
-                            />
-                        </div>
-                        <NeoTextArea
-                            value={exp.description}
-                            onChange={(e) => updateExperience(exp.id, 'description', e.target.value)}
-                            rows={3}
-                            placeholder={t.phDescription}
+                  {/* End Date - Fixed alignment */}
+                  <div className="flex flex-col justify-end min-w-0">
+                    <InputLabel label={t.endDate} />
+                    <NeoInput
+                      type="month"
+                      value={exp.endDate}
+                      disabled={exp.current}
+                      onChange={(e) => updateExperience(exp.id, 'endDate', e.target.value)}
+                      className="disabled:bg-gray-200 disabled:text-gray-500 disabled:border-gray-400 w-full"
+                    />
+                  </div>
+
+                  {/* Current Checkbox - New Row */}
+                  <div className="md:col-span-2">
+                    <label className="flex items-center gap-2 cursor-pointer select-none w-max">
+                      <div className="relative">
+                        <input
+                          type="checkbox"
+                          checked={exp.current}
+                          onChange={(e) => updateExperience(exp.id, 'current', e.target.checked)}
+                          className="sr-only peer"
                         />
-                    </div>
+                        <div className={`${darkMode ? 'bg-gray-800 border-gray-600 peer-checked:bg-gray-600' : 'bg-white border-black peer-checked:bg-neo-green'} w-5 h-5 border-2 transition-colors`}></div>
+                        {exp.current && <div className={`absolute inset-0 flex items-center justify-center pointer-events-none ${darkMode ? 'bg-gray-200' : ''}`}>
+                          <div className={`w-2 h-2 ${darkMode ? 'bg-gray-800' : 'bg-black'}`}></div>
+                        </div>}
+                      </div>
+                      <span className={`text-xs font-bold uppercase whitespace-nowrap ${darkMode ? 'text-gray-200' : ''}`}>{t.current}</span>
+                    </label>
+                  </div>
                 </div>
-             ))}
-             <button
-                onClick={addExperience}
-                className={`${darkMode ? 'border-gray-500 bg-gray-700 hover:bg-green-600/50 text-white' : 'border-black bg-gray-50 hover:bg-neo-green/50'} w-full py-3 border-2 border-dashed transition-colors flex items-center justify-center gap-2 font-bold uppercase tracking-wide text-sm`}
+                <div>
+                  <div className="flex justify-between items-center mb-2">
+                    <InputLabel label={t.description} />
+                    <AIButton
+                      onClick={() => handleEnhanceExp(exp.id, exp.description)}
+                      isLoading={loadingAI[`exp-${exp.id}`]}
+                      label={t.enhance}
+                      minimal
+                      darkMode={darkMode}
+                    />
+                  </div>
+                  <NeoTextArea
+                    value={exp.description}
+                    onChange={(e) => updateExperience(exp.id, 'description', e.target.value)}
+                    rows={3}
+                    placeholder={t.phDescription}
+                  />
+                </div>
+              </div>
+            ))}
+            <button
+              onClick={addExperience}
+              className={`${darkMode ? 'border-gray-500 bg-gray-700 hover:bg-green-600/50 text-white' : 'border-black bg-gray-50 hover:bg-neo-green/50'} w-full py-3 border-2 border-dashed transition-colors flex items-center justify-center gap-2 font-bold uppercase tracking-wide text-sm`}
             >
-                <Plus className="w-5 h-5" /> {t.addExperience}
+              <Plus className="w-5 h-5" /> {t.addExperience}
             </button>
           </div>
         )}
       </div>
 
-       {/* Education Section */}
-       <div className="border-2 border-black bg-white shadow-neo">
+      {/* Education Section */}
+      <div className="border-2 border-black bg-white shadow-neo">
         <SectionHeader title={t.education} isOpen={activeSections.includes('education')} onClick={() => toggleSection('education')} />
-        
+
         {activeSections.includes('education') && (
           <div className="p-5 space-y-6 animate-in slide-in-from-top-2 duration-200">
-             {data.education.map((edu) => (
-                <div key={edu.id} className="relative p-4 border-2 border-black bg-neo-white shadow-neo-sm">
-                     <button
-                        onClick={() => removeEducation(edu.id)}
-                        className={`absolute top-0 right-0 p-2 border-l-2 border-b-2 ${darkMode ? 'border-gray-500 bg-pink-700 hover:bg-pink-600 text-white' : 'border-black bg-neo-pink hover:bg-red-400 text-black'} transition-colors`}
-                        title={t.removeEducation}
-                    >
-                        <Trash2 className="w-4 h-4" />
-                    </button>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 pr-8 mt-2">
-                         <div>
-                            <InputLabel label={t.institution} />
-                            <NeoInput 
-                                value={edu.institution} 
-                                onChange={(e) => updateEducation(edu.id, 'institution', e.target.value)}
-                                placeholder={t.phSchool}
-                            />
-                        </div>
-                        <div>
-                            <InputLabel label={t.degree} />
-                            <NeoInput 
-                                value={edu.degree} 
-                                onChange={(e) => updateEducation(edu.id, 'degree', e.target.value)}
-                                placeholder={t.phDegree}
-                            />
-                        </div>
-                         <div>
-                            <InputLabel label={t.startDate} />
-                            <NeoInput 
-                                type="month"
-                                value={edu.startDate} 
-                                onChange={(e) => updateEducation(edu.id, 'startDate', e.target.value)}
-                            />
-                        </div>
-                         <div>
-                            <InputLabel label={t.endDate} />
-                            <NeoInput 
-                                type="month"
-                                value={edu.endDate} 
-                                onChange={(e) => updateEducation(edu.id, 'endDate', e.target.value)}
-                            />
-                        </div>
-                    </div>
+            {data.education.map((edu) => (
+              <div key={edu.id} className="relative p-4 border-2 border-black bg-neo-white shadow-neo-sm">
+                <button
+                  onClick={() => removeEducation(edu.id)}
+                  className={`absolute top-0 right-0 p-2 border-l-2 border-b-2 ${darkMode ? 'border-gray-500 bg-pink-700 hover:bg-pink-600 text-white' : 'border-black bg-neo-pink hover:bg-red-400 text-black'} transition-colors`}
+                  title={t.removeEducation}
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 pr-8 mt-2">
+                  <div>
+                    <InputLabel label={t.institution} />
+                    <NeoInput
+                      value={edu.institution}
+                      onChange={(e) => updateEducation(edu.id, 'institution', e.target.value)}
+                      placeholder={t.phSchool}
+                    />
+                  </div>
+                  <div>
+                    <InputLabel label={t.degree} />
+                    <NeoInput
+                      value={edu.degree}
+                      onChange={(e) => updateEducation(edu.id, 'degree', e.target.value)}
+                      placeholder={t.phDegree}
+                    />
+                  </div>
+                  <div>
+                    <InputLabel label={t.startDate} />
+                    <NeoInput
+                      type="month"
+                      value={edu.startDate}
+                      onChange={(e) => updateEducation(edu.id, 'startDate', e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <InputLabel label={t.endDate} />
+                    <NeoInput
+                      type="month"
+                      value={edu.endDate}
+                      onChange={(e) => updateEducation(edu.id, 'endDate', e.target.value)}
+                    />
+                  </div>
                 </div>
-             ))}
-              <button
-                onClick={addEducation}
-                className={`${darkMode ? 'border-gray-500 bg-gray-700 hover:bg-green-600/50 text-white' : 'border-black bg-gray-50 hover:bg-neo-green/50'} w-full py-3 border-2 border-dashed transition-colors flex items-center justify-center gap-2 font-bold uppercase tracking-wide text-sm`}
+              </div>
+            ))}
+            <button
+              onClick={addEducation}
+              className={`${darkMode ? 'border-gray-500 bg-gray-700 hover:bg-green-600/50 text-white' : 'border-black bg-gray-50 hover:bg-neo-green/50'} w-full py-3 border-2 border-dashed transition-colors flex items-center justify-center gap-2 font-bold uppercase tracking-wide text-sm`}
             >
-                <Plus className="w-5 h-5" /> {t.addEducation}
+              <Plus className="w-5 h-5" /> {t.addEducation}
             </button>
           </div>
         )}
-       </div>
+      </div>
 
       {/* Projects Section */}
       <div className="border-2 border-black bg-white shadow-neo">
         <SectionHeader title={t.projects} isOpen={activeSections.includes('projects')} onClick={() => toggleSection('projects')} />
-        
+
         {activeSections.includes('projects') && (
           <div className="p-5 space-y-6 animate-in slide-in-from-top-2 duration-200">
-              {data.projects.map((proj) => (
-                <div key={proj.id} className="relative p-4 border-2 border-black bg-neo-white shadow-neo-sm">
-                    <button
-                        onClick={() => removeProject(proj.id)}
-                        className={`absolute top-0 right-0 p-2 border-l-2 border-b-2 ${darkMode ? 'border-gray-500 bg-pink-700 hover:bg-pink-600 text-white' : 'border-black bg-neo-pink hover:bg-red-400 text-black'} transition-colors`}
-                        title={t.removeProject}
-                    >
-                        <Trash2 className="w-4 h-4" />
-                    </button>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 pr-8 mt-2">
-                        <div>
-                            <InputLabel label={t.projectName} />
-                            <NeoInput 
-                                value={proj.name} 
-                                onChange={(e) => updateProject(proj.id, 'name', e.target.value)}
-                                placeholder={t.phProjectName}
-                            />
-                        </div>
-                        <div>
-                            <InputLabel label={t.projectLink} />
-                            <NeoInput 
-                                value={proj.link} 
-                                onChange={(e) => updateProject(proj.id, 'link', e.target.value)}
-                                placeholder="https://..."
-                            />
-                        </div>
+            {data.projects.map((proj) => (
+              <div key={proj.id} className="relative p-4 border-2 border-black bg-neo-white shadow-neo-sm">
+                <button
+                  onClick={() => removeProject(proj.id)}
+                  className={`absolute top-0 right-0 p-2 border-l-2 border-b-2 ${darkMode ? 'border-gray-500 bg-pink-700 hover:bg-pink-600 text-white' : 'border-black bg-neo-pink hover:bg-red-400 text-black'} transition-colors`}
+                  title={t.removeProject}
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 pr-8 mt-2">
+                  <div>
+                    <InputLabel label={t.projectName} />
+                    <NeoInput
+                      value={proj.name}
+                      onChange={(e) => updateProject(proj.id, 'name', e.target.value)}
+                      placeholder={t.phProjectName}
+                    />
+                  </div>
+                  <div>
+                    <InputLabel label={t.projectLink} />
+                    <NeoInput
+                      value={proj.link}
+                      onChange={(e) => updateProject(proj.id, 'link', e.target.value)}
+                      placeholder="https://..."
+                    />
+                  </div>
 
-                         {/* Start Date */}
-                         <div className="flex flex-col justify-end">
-                            <InputLabel label={t.startDate} />
-                            <NeoInput 
-                                type="month"
-                                value={proj.startDate} 
-                                onChange={(e) => updateProject(proj.id, 'startDate', e.target.value)}
-                            />
-                        </div>
+                  {/* Start Date */}
+                  <div className="flex flex-col justify-end">
+                    <InputLabel label={t.startDate} />
+                    <NeoInput
+                      type="month"
+                      value={proj.startDate}
+                      onChange={(e) => updateProject(proj.id, 'startDate', e.target.value)}
+                    />
+                  </div>
 
-                        {/* End Date - Fixed alignment */}
-                        <div className="flex flex-col justify-end min-w-0">
-                            <InputLabel label={t.endDate} />
-                            <NeoInput 
-                                type="month"
-                                value={proj.endDate} 
-                                disabled={proj.current}
-                                onChange={(e) => updateProject(proj.id, 'endDate', e.target.value)}
-                                className="disabled:bg-gray-200 disabled:text-gray-500 disabled:border-gray-400 w-full"
-                            />
-                        </div>
+                  {/* End Date - Fixed alignment */}
+                  <div className="flex flex-col justify-end min-w-0">
+                    <InputLabel label={t.endDate} />
+                    <NeoInput
+                      type="month"
+                      value={proj.endDate}
+                      disabled={proj.current}
+                      onChange={(e) => updateProject(proj.id, 'endDate', e.target.value)}
+                      className="disabled:bg-gray-200 disabled:text-gray-500 disabled:border-gray-400 w-full"
+                    />
+                  </div>
 
-                        {/* Current Checkbox - New Row */}
-                        <div className="md:col-span-2">
-                            <label className="flex items-center gap-2 cursor-pointer select-none w-max">
-                                <div className="relative">
-                                    <input
-                                        type="checkbox"
-                                        checked={proj.current}
-                                        onChange={(e) => updateProject(proj.id, 'current', e.target.checked)}
-                                        className="sr-only peer"
-                                    />
-                                    <div className={`${darkMode ? 'bg-gray-800 border-gray-600 peer-checked:bg-gray-600' : 'bg-white border-black peer-checked:bg-neo-green'} w-5 h-5 border-2 transition-colors`}></div>
-                                    {proj.current && <div className={`absolute inset-0 flex items-center justify-center pointer-events-none ${darkMode ? 'bg-gray-200' : ''}`}>
-                                        <div className={`w-2 h-2 ${darkMode ? 'bg-gray-800' : 'bg-black'}`}></div>
-                                    </div>}
-                                </div>
-                                <span className={`text-xs font-bold uppercase whitespace-nowrap ${darkMode ? 'text-gray-200' : ''}`}>{t.current}</span>
-                            </label>
-                        </div>
-                    </div>
-                    <div>
-                        <div className="flex justify-between items-center mb-2">
-                            <InputLabel label={t.description} />
-                              <AIButton
-                                onClick={() => handleEnhanceProject(proj.id, proj.description)}
-                                isLoading={loadingAI[`proj-${proj.id}`]}
-                                label={t.enhance}
-                                minimal
-                                darkMode={darkMode}
-                            />
-                        </div>
-                        <NeoTextArea
-                            value={proj.description}
-                            onChange={(e) => updateProject(proj.id, 'description', e.target.value)}
-                            rows={3}
-                            placeholder={t.phDescription}
+                  {/* Current Checkbox - New Row */}
+                  <div className="md:col-span-2">
+                    <label className="flex items-center gap-2 cursor-pointer select-none w-max">
+                      <div className="relative">
+                        <input
+                          type="checkbox"
+                          checked={proj.current}
+                          onChange={(e) => updateProject(proj.id, 'current', e.target.checked)}
+                          className="sr-only peer"
                         />
-                    </div>
+                        <div className={`${darkMode ? 'bg-gray-800 border-gray-600 peer-checked:bg-gray-600' : 'bg-white border-black peer-checked:bg-neo-green'} w-5 h-5 border-2 transition-colors`}></div>
+                        {proj.current && <div className={`absolute inset-0 flex items-center justify-center pointer-events-none ${darkMode ? 'bg-gray-200' : ''}`}>
+                          <div className={`w-2 h-2 ${darkMode ? 'bg-gray-800' : 'bg-black'}`}></div>
+                        </div>}
+                      </div>
+                      <span className={`text-xs font-bold uppercase whitespace-nowrap ${darkMode ? 'text-gray-200' : ''}`}>{t.current}</span>
+                    </label>
+                  </div>
                 </div>
-              ))}
-              <button
-                onClick={addProject}
-                className={`${darkMode ? 'border-gray-500 bg-gray-700 hover:bg-green-600/50 text-white' : 'border-black bg-gray-50 hover:bg-neo-green/50'} w-full py-3 border-2 border-dashed transition-colors flex items-center justify-center gap-2 font-bold uppercase tracking-wide text-sm`}
+                <div>
+                  <div className="flex justify-between items-center mb-2">
+                    <InputLabel label={t.description} />
+                    <AIButton
+                      onClick={() => handleEnhanceProject(proj.id, proj.description)}
+                      isLoading={loadingAI[`proj-${proj.id}`]}
+                      label={t.enhance}
+                      minimal
+                      darkMode={darkMode}
+                    />
+                  </div>
+                  <NeoTextArea
+                    value={proj.description}
+                    onChange={(e) => updateProject(proj.id, 'description', e.target.value)}
+                    rows={3}
+                    placeholder={t.phDescription}
+                  />
+                </div>
+              </div>
+            ))}
+            <button
+              onClick={addProject}
+              className={`${darkMode ? 'border-gray-500 bg-gray-700 hover:bg-green-600/50 text-white' : 'border-black bg-gray-50 hover:bg-neo-green/50'} w-full py-3 border-2 border-dashed transition-colors flex items-center justify-center gap-2 font-bold uppercase tracking-wide text-sm`}
             >
-                <Plus className="w-5 h-5" /> {t.addProject}
+              <Plus className="w-5 h-5" /> {t.addProject}
             </button>
           </div>
         )}
@@ -603,21 +605,21 @@ const EditorComponent: React.FC<EditorProps> = ({ data, onChange, language, dark
 
       {/* Skills Section */}
       <div className="border-2 border-black bg-white shadow-neo">
-         <SectionHeader title={t.skills} isOpen={activeSections.includes('skills')} onClick={() => toggleSection('skills')} />
-        
+        <SectionHeader title={t.skills} isOpen={activeSections.includes('skills')} onClick={() => toggleSection('skills')} />
+
         {activeSections.includes('skills') && (
-            <div className="p-5 animate-in slide-in-from-top-2 duration-200">
-                <div className="flex justify-between items-center mb-3">
-                    <span className="text-xs font-bold text-gray-500 uppercase">{t.separateSkills}</span>
-                    <AIButton onClick={handleSuggestSkills} isLoading={loadingAI.skills} label={t.suggest} darkMode={darkMode} />
-                </div>
-                <NeoTextArea
-                    value={data.skills.join(', ')}
-                    onChange={(e) => onChange({ ...data, skills: e.target.value.split(',').map(s => s.trim()).filter(s => s) })}
-                    rows={3}
-                    placeholder={t.phSkills}
-                />
+          <div className="p-5 animate-in slide-in-from-top-2 duration-200">
+            <div className="flex justify-between items-center mb-3">
+              <span className="text-xs font-bold text-gray-500 uppercase">{t.separateSkills}</span>
+              <AIButton onClick={handleSuggestSkills} isLoading={loadingAI.skills} label={t.suggest} darkMode={darkMode} />
             </div>
+            <NeoTextArea
+              value={data.skills.join(', ')}
+              onChange={(e) => onChange({ ...data, skills: e.target.value.split(',').map(s => s.trim()).filter(s => s) })}
+              rows={3}
+              placeholder={t.phSkills}
+            />
+          </div>
         )}
       </div>
 

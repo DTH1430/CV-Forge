@@ -10,7 +10,7 @@ interface AIButtonProps {
   darkMode?: boolean;
 }
 
-export const AIButton: React.FC<AIButtonProps> = ({
+export const AIButton = React.memo<AIButtonProps>(({
   onClick,
   isLoading,
   label = "Enhance with AI",
@@ -19,7 +19,7 @@ export const AIButton: React.FC<AIButtonProps> = ({
   darkMode = false
 }) => {
   if (minimal) {
-     return (
+    return (
       <button
         type="button"
         onClick={onClick}
@@ -28,9 +28,9 @@ export const AIButton: React.FC<AIButtonProps> = ({
         title={label}
       >
         {isLoading ? (
-          <Loader2 className={`w-3.5 h-3.5 animate-spin ${darkMode ? 'text-gray-200' : ''}`} />
+          <Loader2 className={`w-3.5 h-3.5 animate-spin ${darkMode ? 'text-gray-200' : ''}`} aria-hidden="true" />
         ) : (
-          <Sparkles className={`w-3.5 h-3.5 ${darkMode ? 'text-gray-200' : ''}`} />
+          <Sparkles className={`w-3.5 h-3.5 ${darkMode ? 'text-gray-200' : ''}`} aria-hidden="true" />
         )}
       </button>
     );
@@ -44,11 +44,11 @@ export const AIButton: React.FC<AIButtonProps> = ({
       className={`inline-flex items-center gap-2 px-3 py-1.5 text-xs font-bold uppercase tracking-wider ${darkMode ? 'text-gray-200 bg-gray-800 hover:bg-gray-700 border-gray-600' : 'text-black bg-neo-blue hover:bg-blue-300 border-black'} border-2 ${darkMode ? 'shadow-[3px_3px_0px_0px_rgba(100,100,100,1)]' : 'shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]'} hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed`}
     >
       {isLoading ? (
-        <Loader2 className={`w-3.5 h-3.5 animate-spin ${darkMode ? 'text-gray-200' : ''}`} />
+        <Loader2 className={`w-3.5 h-3.5 animate-spin ${darkMode ? 'text-gray-200' : ''}`} aria-hidden="true" />
       ) : (
-        <Sparkles className={`w-3.5 h-3.5 ${darkMode ? 'text-gray-200' : ''}`} />
+        <Sparkles className={`w-3.5 h-3.5 ${darkMode ? 'text-gray-200' : ''}`} aria-hidden="true" />
       )}
       {label}
     </button>
   );
-};
+});

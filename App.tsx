@@ -6,7 +6,45 @@ import { Preview } from './components/Preview';
 import { translations } from './translations';
 import { generateDocx } from './services/docxService';
 import { Download, FileText, Printer, Eye, EyeOff, Languages, FileDown, RefreshCcw, Layout, Moon, Sun, FileImage, FileText as FileTextIcon, Camera, MoreHorizontal } from 'lucide-react';
-import { TemplateProvider, useTemplate } from './contexts/TemplateContext';
+import { TemplateProvider, useTemplate, TemplateType } from './contexts/TemplateContext';
+
+// Static CSS for AI text gradient - hoisted outside component (rerender-hoist-jsx)
+const aiTextStyle = `
+  .ai-text-gradient {
+    background: linear-gradient(135deg, #ec4899, #f43f5e, #db2777, #e11d48, #c026d5, #a21caf, #7c3aed, #6d28d9, #5b21b6, #3b82f6, #2563eb, #1d4ed8, #0ea5e9, #0284c7, #0369a1, #10b981, #059669, #047857, #8b5cf6, #a855f7, #c084fc, #e879f9, #ec4899);
+    background-size: 1000% 1000%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    position: relative;
+    display: inline-block;
+    animation: gradientShift 12s ease infinite, textGlow 2s ease-in-out infinite;
+    font-weight: 900;
+    letter-spacing: -0.5px;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ai-text-gradient {
+      animation: none;
+      background-position: 0% 50%;
+    }
+  }
+
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    25% { background-position: 25% 50%; }
+    50% { background-position: 50% 50%; }
+    75% { background-position: 75% 50%; }
+    100% { background-position: 100% 50%; }
+  }
+
+  @keyframes textGlow {
+    0% { text-shadow: 0 0 8px rgba(255, 255, 255, 0.5); }
+    50% { text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 20px rgba(200, 150, 255, 0.6); }
+    100% { text-shadow: 0 0 8px rgba(255, 255, 255, 0.5); }
+  }
+`;
 
 // TemplateWrapper Component to handle template context
 const TemplateWrapper: React.FC = () => {
@@ -78,12 +116,12 @@ const TemplateWrapper: React.FC = () => {
   const handleExportDocx = async () => {
     setIsExportingDocx(true);
     try {
-        await generateDocx(cvData, language);
+      await generateDocx(cvData, language);
     } catch (error) {
-        console.error("Failed to generate DOCX", error);
-        alert("Failed to generate DOCX. Please try again.");
+      console.error("Failed to generate DOCX", error);
+      alert("Failed to generate DOCX. Please try again.");
     } finally {
-        setIsExportingDocx(false);
+      setIsExportingDocx(false);
     }
   };
 
@@ -139,17 +177,17 @@ const TemplateWrapper: React.FC = () => {
 
   const handleReset = () => {
     if (window.confirm(t.resetConfirm)) {
-        // Generate a fresh empty object using the factory function
-        const newData = getEmptyCVData();
+      // Generate a fresh empty object using the factory function
+      const newData = getEmptyCVData();
 
-        // Clear local storage
-        localStorage.removeItem('cv_data');
+      // Clear local storage
+      localStorage.removeItem('cv_data');
 
-        // Update state to trigger re-render with empty data
-        setCvData(newData);
+      // Update state to trigger re-render with empty data
+      setCvData(newData);
 
-        // Force Editor remount to ensure clean state
-        setEditorKey(prev => prev + 1);
+      // Force Editor remount to ensure clean state
+      setEditorKey(prev => prev + 1);
     }
   };
 
@@ -157,281 +195,254 @@ const TemplateWrapper: React.FC = () => {
     setLanguage(prev => prev === 'vi' ? 'en' : 'vi');
   };
 
-  const handleTemplateChange = (newTemplate: 'modern' | 'classic' | 'minimal') => {
+  const handleTemplateChange = (newTemplate: TemplateType) => {
     setTemplate(newTemplate);
   };
 
-  // Add custom styles for the AI text animation
-  const aiTextStyle = `
-    .ai-text-gradient {
-      background: linear-gradient(135deg, #ec4899, #f43f5e, #db2777, #e11d48, #c026d5, #a21caf, #7c3aed, #6d28d9, #5b21b6, #3b82f6, #2563eb, #1d4ed8, #0ea5e9, #0284c7, #0369a1, #10b981, #059669, #047857, #8b5cf6, #a855f7, #c084fc, #e879f9, #ec4899);
-      background-size: 1000% 1000%;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      position: relative;
-      display: inline-block;
-      animation: gradientShift 12s ease infinite, textGlow 2s ease-in-out infinite;
-      font-weight: 900;
-      letter-spacing: -0.5px;
-      text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
-    }
 
-
-
-
-
-
-    @keyframes gradientShift {
-      0% { background-position: 0% 50%; }
-      25% { background-position: 25% 50%; }
-      50% { background-position: 50% 50%; }
-      75% { background-position: 75% 50%; }
-      100% { background-position: 100% 50%; }
-    }
-
-    @keyframes textGlow {
-      0% { text-shadow: 0 0 8px rgba(255, 255, 255, 0.5); }
-      50% { text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 20px rgba(200, 150, 255, 0.6); }
-      100% { text-shadow: 0 0 8px rgba(255, 255, 255, 0.5); }
-    }
-  `;
 
   return (
     <>
       <style>{aiTextStyle}</style>
       <div className={`min-h-screen flex flex-col font-sans ${darkMode ? 'dark bg-gray-900 text-gray-200' : ''}`}>
-      {/* Navbar */}
-      <nav className={`${darkMode ? 'bg-gray-900 border-gray-700' : 'bg-neo-white border-b-4 border-black'} sticky top-0 z-50 no-print`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-20 items-center">
+        {/* Navbar */}
+        <nav className={`${darkMode ? 'bg-gray-900 border-gray-700' : 'bg-neo-white border-b-4 border-black'} sticky top-0 z-50 no-print`}>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between h-20 items-center">
 
-            {/* Logo Area */}
-            <div className="flex items-center gap-3">
-              <div className={`${darkMode ? 'bg-gray-800' : 'bg-neo-black'} text-white p-2 border-2 border-transparent ${darkMode ? 'shadow-[4px_4px_0px_0px_#333]' : 'shadow-[4px_4px_0px_0px_#888]'}`}>
-                <FileText className="w-6 h-6" />
-              </div>
-              <span className={`text-2xl font-black ${darkMode ? 'text-gray-200' : 'text-neo-black'} tracking-tighter uppercase font-display hidden sm:inline`}>
-                CV Forge <span className="ai-text-gradient">AI</span>
-              </span>
-              <span className={`text-xl font-black ${darkMode ? 'text-gray-200' : 'text-neo-black'} tracking-tighter uppercase font-display sm:hidden`}>
-                CV <span className="ai-text-gradient">AI</span>
-              </span>
-            </div>
-
-            {/* Actions */}
-            <div className="flex items-center gap-2 sm:gap-4">
-               {/* Mobile Preview Toggle */}
-               <button
-                onClick={() => setShowPreviewMobile(!showPreviewMobile)}
-                className={`${darkMode ? 'bg-gray-800 border-gray-600 hover:bg-gray-700 text-gray-200' : 'bg-neo-yellow border-black'} md:hidden p-2 border-2 shadow-neo hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all`}
-              >
-                {showPreviewMobile ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-              </button>
-
-              {/* Template Selector */}
-              <div
-                className="relative"
-                ref={dropdownRef}
-              >
-                <button
-                  className={`${darkMode ? 'bg-gray-800 text-gray-200 border-gray-600 hover:bg-gray-700' : 'bg-white text-black border-black'} flex items-center gap-2 px-3 sm:px-4 py-2 text-sm font-bold border-2 shadow-neo hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all`}
-                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  aria-expanded={isDropdownOpen}
-                  aria-haspopup="true"
-                >
-                  <Layout className="w-4 h-4" />
-                  <span className="hidden sm:inline">{t.template}</span>
-                </button>
-                {isDropdownOpen && (
-                  <div
-                    className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-black'} absolute right-0 mt-1 w-48 border-2 shadow-neo z-50`}
-                  >
-                    <button
-                      onClick={() => { handleTemplateChange('modern'); setIsDropdownOpen(false); }}
-                      className={`w-full text-left px-4 py-2 text-sm font-bold ${darkMode ? 'hover:bg-gray-700 text-gray-200' : 'hover:bg-neo-blue text-black'} ${template === 'modern' ? (darkMode ? 'bg-gray-700' : 'bg-neo-blue') : ''}`}
-                    >
-                      {t.modernTemplate}
-                    </button>
-                    <button
-                      onClick={() => { handleTemplateChange('classic'); setIsDropdownOpen(false); }}
-                      className={`w-full text-left px-4 py-2 text-sm font-bold ${darkMode ? 'hover:bg-gray-700 text-gray-200' : 'hover:bg-neo-blue text-black'} ${template === 'classic' ? (darkMode ? 'bg-gray-700' : 'bg-neo-blue') : ''}`}
-                    >
-                      {t.classicTemplate}
-                    </button>
-                    <button
-                      onClick={() => { handleTemplateChange('minimal'); setIsDropdownOpen(false); }}
-                      className={`w-full text-left px-4 py-2 text-sm font-bold ${darkMode ? 'hover:bg-gray-700 text-gray-200' : 'hover:bg-neo-blue text-black'} ${template === 'minimal' ? (darkMode ? 'bg-gray-700' : 'bg-neo-blue') : ''}`}
-                    >
-                      {t.minimalTemplate}
-                    </button>
-                    <button
-                      onClick={() => { handleTemplateChange('academic'); setIsDropdownOpen(false); }}
-                      className={`w-full text-left px-4 py-2 text-sm font-bold ${darkMode ? 'hover:bg-gray-700 text-gray-200' : 'hover:bg-neo-blue text-black'} ${template === 'academic' ? (darkMode ? 'bg-gray-700' : 'bg-neo-blue') : ''}`}
-                    >
-                      {t.academicTemplate}
-                    </button>
-                    <button
-                      onClick={() => { handleTemplateChange('creative'); setIsDropdownOpen(false); }}
-                      className={`w-full text-left px-4 py-2 text-sm font-bold ${darkMode ? 'hover:bg-gray-700 text-gray-200' : 'hover:bg-neo-blue text-black'} ${template === 'creative' ? (darkMode ? 'bg-gray-700' : 'bg-neo-blue') : ''}`}
-                    >
-                      {t.creativeTemplate}
-                    </button>
-                    <button
-                      onClick={() => { handleTemplateChange('corporate'); setIsDropdownOpen(false); }}
-                      className={`w-full text-left px-4 py-2 text-sm font-bold ${darkMode ? 'hover:bg-gray-700 text-gray-200' : 'hover:bg-neo-blue text-black'} ${template === 'corporate' ? (darkMode ? 'bg-gray-700' : 'bg-neo-blue') : ''}`}
-                    >
-                      {t.corporateTemplate}
-                    </button>
-                    <button
-                      onClick={() => { handleTemplateChange('technical'); setIsDropdownOpen(false); }}
-                      className={`w-full text-left px-4 py-2 text-sm font-bold ${darkMode ? 'hover:bg-gray-700 text-gray-200' : 'hover:bg-neo-blue text-black'} ${template === 'technical' ? (darkMode ? 'bg-gray-700' : 'bg-neo-blue') : ''}`}
-                    >
-                      {t.technicalTemplate}
-                    </button>
-                  </div>
-                )}
+              {/* Logo Area */}
+              <div className="flex items-center gap-3">
+                <div className={`${darkMode ? 'bg-gray-800' : 'bg-neo-black'} text-white p-2 border-2 border-transparent ${darkMode ? 'shadow-[4px_4px_0px_0px_#333]' : 'shadow-[4px_4px_0px_0px_#888]'}`}>
+                  <FileText className="w-6 h-6" aria-hidden="true" />
+                </div>
+                <span className={`text-2xl font-black ${darkMode ? 'text-gray-200' : 'text-neo-black'} tracking-tighter uppercase font-display hidden sm:inline`}>
+                  CV Forge <span className="ai-text-gradient">AI</span>
+                </span>
+                <span className={`text-xl font-black ${darkMode ? 'text-gray-200' : 'text-neo-black'} tracking-tighter uppercase font-display sm:hidden`}>
+                  CV <span className="ai-text-gradient">AI</span>
+                </span>
               </div>
 
-              {/* Language Switch */}
-               <button
-                onClick={toggleLanguage}
-                className={`${darkMode ? 'bg-gray-800 text-gray-200 border-gray-600 hover:bg-gray-700' : 'bg-white text-black border-black'} flex items-center gap-2 px-3 sm:px-4 py-2 text-sm font-bold border-2 shadow-neo hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all`}
-               >
-                 <Languages className="w-4 h-4" />
-                 <span>{language === 'vi' ? 'EN' : 'VI'}</span>
-               </button>
-
-              {/* Reset - Now visible on mobile */}
-              <button
-                onClick={handleReset}
-                className={`${darkMode ? 'bg-gray-800 border-gray-600 hover:bg-gray-700 text-gray-200' : 'bg-neo-pink border-black'} flex px-3 py-2 text-sm font-bold border-2 shadow-neo hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all items-center gap-2`}
-                title={t.reset}
-              >
-                <RefreshCcw className="w-4 h-4" />
-              </button>
-
-              {/* Dark Mode Toggle */}
-              <button
-                onClick={toggleDarkMode}
-                className={`${darkMode ? 'bg-gray-800 text-gray-200 border-gray-600 hover:bg-gray-700' : 'bg-white text-black border-black'} flex items-center gap-2 px-3 sm:px-4 py-2 text-sm font-bold border-2 shadow-neo hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all`}
-              >
-                {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-                <span className="hidden sm:inline">{darkMode ? t.lightMode : t.darkMode}</span>
-              </button>
-
-              {/* Export Group */}
-              <div className="flex items-center gap-2 sm:gap-3">
+              {/* Actions */}
+              <div className="flex items-center gap-2 sm:gap-4">
+                {/* Mobile Preview Toggle */}
                 <button
-                  onClick={handleExportDocx}
-                  disabled={isExportingDocx}
-                  className={`${darkMode ? 'bg-gray-800 border-gray-600 hover:bg-gray-700 text-gray-200' : 'bg-neo-green border-black'} hidden sm:flex items-center gap-2 px-4 py-2 border-2 shadow-neo text-sm font-bold hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed`}
+                  onClick={() => setShowPreviewMobile(!showPreviewMobile)}
+                  className={`${darkMode ? 'bg-gray-800 border-gray-600 hover:bg-gray-700 text-gray-200' : 'bg-neo-yellow border-black'} md:hidden p-2 border-2 shadow-neo hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all`}
+                  aria-label={showPreviewMobile ? 'Hide preview' : 'Show preview'}
                 >
-                  <FileDown className="w-4 h-4" />
-                  <span>DOCX</span>
+                  {showPreviewMobile ? <EyeOff className="w-5 h-5" aria-hidden="true" /> : <Eye className="w-5 h-5" aria-hidden="true" />}
                 </button>
 
-                <button
-                  onClick={handleExportDocx}
-                  disabled={isExportingDocx}
-                  className={`${darkMode ? 'bg-gray-800 border-gray-600 hover:bg-gray-700 text-gray-200' : 'bg-neo-green border-black'} sm:hidden flex items-center justify-center w-10 h-10 border-2 shadow-neo text-sm font-bold hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed`}
-                  title="Export DOCX"
-                >
-                  <FileDown className="w-5 h-5" />
-                </button>
-
-                {/* Export Dropdown */}
+                {/* Template Selector */}
                 <div
                   className="relative"
-                  ref={exportDropdownRef}
+                  ref={dropdownRef}
                 >
                   <button
-                    onClick={() => setIsExportDropdownOpen(!isExportDropdownOpen)}
-                    className={`${darkMode ? 'bg-gray-800 border-gray-600 hover:bg-gray-700 text-gray-200' : 'bg-neo-blue border-black'} flex items-center gap-2 px-3 sm:px-4 py-2 text-sm font-bold border-2 shadow-neo hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all`}
-                    aria-expanded={isExportDropdownOpen}
+                    className={`${darkMode ? 'bg-gray-800 text-gray-200 border-gray-600 hover:bg-gray-700' : 'bg-white text-black border-black'} flex items-center gap-2 px-3 sm:px-4 py-2 text-sm font-bold border-2 shadow-neo hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all`}
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    aria-expanded={isDropdownOpen}
                     aria-haspopup="true"
+                    aria-label={t.template}
                   >
-                    <MoreHorizontal className="w-4 h-4" />
-                    <span className="hidden sm:inline">{t.export}</span>
+                    <Layout className="w-4 h-4" aria-hidden="true" />
+                    <span className="hidden sm:inline">{t.template}</span>
                   </button>
-                  {isExportDropdownOpen && (
+                  {isDropdownOpen && (
                     <div
-                      className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-black'} absolute right-0 mt-1 w-56 border-2 shadow-neo z-50`}
+                      className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-black'} absolute right-0 mt-1 w-48 border-2 shadow-neo z-50`}
                     >
                       <button
-                        onClick={async (e) => { e.stopPropagation(); await handleExportPDF('standard'); setIsExportDropdownOpen(false); }}
-                        className={`w-full text-left px-4 py-2 text-sm font-bold ${darkMode ? 'hover:bg-gray-700 text-gray-200' : 'hover:bg-neo-blue'}`}
+                        onClick={() => { handleTemplateChange('modern'); setIsDropdownOpen(false); }}
+                        className={`w-full text-left px-4 py-2 text-sm font-bold ${darkMode ? 'hover:bg-gray-700 text-gray-200' : 'hover:bg-neo-blue text-black'} ${template === 'modern' ? (darkMode ? 'bg-gray-700' : 'bg-neo-blue') : ''}`}
                       >
-                        {t.pdfStandard}
+                        {t.modernTemplate}
                       </button>
                       <button
-                        onClick={async (e) => { e.stopPropagation(); await handleExportPDF('high'); setIsExportDropdownOpen(false); }}
-                        className={`w-full text-left px-4 py-2 text-sm font-bold ${darkMode ? 'hover:bg-gray-700 text-gray-200' : 'hover:bg-neo-blue'}`}
+                        onClick={() => { handleTemplateChange('classic'); setIsDropdownOpen(false); }}
+                        className={`w-full text-left px-4 py-2 text-sm font-bold ${darkMode ? 'hover:bg-gray-700 text-gray-200' : 'hover:bg-neo-blue text-black'} ${template === 'classic' ? (darkMode ? 'bg-gray-700' : 'bg-neo-blue') : ''}`}
                       >
-                        {t.pdfHighRes}
+                        {t.classicTemplate}
                       </button>
                       <button
-                        onClick={async (e) => { e.stopPropagation(); await handleExportPNG(); setIsExportDropdownOpen(false); }}
-                        className={`w-full text-left px-4 py-2 text-sm font-bold ${darkMode ? 'hover:bg-gray-700 text-gray-200' : 'hover:bg-neo-blue'}`}
+                        onClick={() => { handleTemplateChange('minimal'); setIsDropdownOpen(false); }}
+                        className={`w-full text-left px-4 py-2 text-sm font-bold ${darkMode ? 'hover:bg-gray-700 text-gray-200' : 'hover:bg-neo-blue text-black'} ${template === 'minimal' ? (darkMode ? 'bg-gray-700' : 'bg-neo-blue') : ''}`}
                       >
-                        {t.pngExport}
+                        {t.minimalTemplate}
                       </button>
                       <button
-                        onClick={async (e) => { e.stopPropagation(); await handleExportJPEG(); setIsExportDropdownOpen(false); }}
-                        className={`w-full text-left px-4 py-2 text-sm font-bold ${darkMode ? 'hover:bg-gray-700 text-gray-200' : 'hover:bg-neo-blue'}`}
+                        onClick={() => { handleTemplateChange('academic'); setIsDropdownOpen(false); }}
+                        className={`w-full text-left px-4 py-2 text-sm font-bold ${darkMode ? 'hover:bg-gray-700 text-gray-200' : 'hover:bg-neo-blue text-black'} ${template === 'academic' ? (darkMode ? 'bg-gray-700' : 'bg-neo-blue') : ''}`}
                       >
-                        {t.jpegExport}
+                        {t.academicTemplate}
                       </button>
                       <button
-                        onClick={async (e) => { e.stopPropagation(); await handleExportMarkdown(); setIsExportDropdownOpen(false); }}
-                        className={`w-full text-left px-4 py-2 text-sm font-bold ${darkMode ? 'hover:bg-gray-700 text-gray-200' : 'hover:bg-neo-blue'}`}
+                        onClick={() => { handleTemplateChange('creative'); setIsDropdownOpen(false); }}
+                        className={`w-full text-left px-4 py-2 text-sm font-bold ${darkMode ? 'hover:bg-gray-700 text-gray-200' : 'hover:bg-neo-blue text-black'} ${template === 'creative' ? (darkMode ? 'bg-gray-700' : 'bg-neo-blue') : ''}`}
                       >
-                        {t.markdownExport}
+                        {t.creativeTemplate}
                       </button>
                       <button
-                        onClick={async (e) => { e.stopPropagation(); await handleExportLaTeX(); setIsExportDropdownOpen(false); }}
-                        className={`w-full text-left px-4 py-2 text-sm font-bold ${darkMode ? 'hover:bg-gray-700 text-gray-200' : 'hover:bg-neo-blue'}`}
+                        onClick={() => { handleTemplateChange('corporate'); setIsDropdownOpen(false); }}
+                        className={`w-full text-left px-4 py-2 text-sm font-bold ${darkMode ? 'hover:bg-gray-700 text-gray-200' : 'hover:bg-neo-blue text-black'} ${template === 'corporate' ? (darkMode ? 'bg-gray-700' : 'bg-neo-blue') : ''}`}
                       >
-                        {t.latexExport}
+                        {t.corporateTemplate}
+                      </button>
+                      <button
+                        onClick={() => { handleTemplateChange('technical'); setIsDropdownOpen(false); }}
+                        className={`w-full text-left px-4 py-2 text-sm font-bold ${darkMode ? 'hover:bg-gray-700 text-gray-200' : 'hover:bg-neo-blue text-black'} ${template === 'technical' ? (darkMode ? 'bg-gray-700' : 'bg-neo-blue') : ''}`}
+                      >
+                        {t.technicalTemplate}
                       </button>
                     </div>
                   )}
                 </div>
-              </div>
 
+                {/* Language Switch */}
+                <button
+                  onClick={toggleLanguage}
+                  className={`${darkMode ? 'bg-gray-800 text-gray-200 border-gray-600 hover:bg-gray-700' : 'bg-white text-black border-black'} flex items-center gap-2 px-3 sm:px-4 py-2 text-sm font-bold border-2 shadow-neo hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all`}
+                  aria-label={language === 'vi' ? 'Switch to English' : 'Switch to Vietnamese'}
+                >
+                  <Languages className="w-4 h-4" aria-hidden="true" />
+                  <span>{language === 'vi' ? 'EN' : 'VI'}</span>
+                </button>
+
+                {/* Reset - Now visible on mobile */}
+                <button
+                  onClick={handleReset}
+                  className={`${darkMode ? 'bg-gray-800 border-gray-600 hover:bg-gray-700 text-gray-200' : 'bg-neo-pink border-black'} flex px-3 py-2 text-sm font-bold border-2 shadow-neo hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all items-center gap-2`}
+                  title={t.reset}
+                  aria-label={t.reset}
+                >
+                  <RefreshCcw className="w-4 h-4" aria-hidden="true" />
+                </button>
+
+                {/* Dark Mode Toggle */}
+                <button
+                  onClick={toggleDarkMode}
+                  className={`${darkMode ? 'bg-gray-800 text-gray-200 border-gray-600 hover:bg-gray-700' : 'bg-white text-black border-black'} flex items-center gap-2 px-3 sm:px-4 py-2 text-sm font-bold border-2 shadow-neo hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all`}
+                  aria-label={darkMode ? t.lightMode : t.darkMode}
+                >
+                  {darkMode ? <Sun className="w-4 h-4" aria-hidden="true" /> : <Moon className="w-4 h-4" aria-hidden="true" />}
+                  <span className="hidden sm:inline">{darkMode ? t.lightMode : t.darkMode}</span>
+                </button>
+
+                {/* Export Group */}
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <button
+                    onClick={handleExportDocx}
+                    disabled={isExportingDocx}
+                    className={`${darkMode ? 'bg-gray-800 border-gray-600 hover:bg-gray-700 text-gray-200' : 'bg-neo-green border-black'} hidden sm:flex items-center gap-2 px-4 py-2 border-2 shadow-neo text-sm font-bold hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed`}
+                  >
+                    <FileDown className="w-4 h-4" aria-hidden="true" />
+                    <span>DOCX</span>
+                  </button>
+
+                  <button
+                    onClick={handleExportDocx}
+                    disabled={isExportingDocx}
+                    className={`${darkMode ? 'bg-gray-800 border-gray-600 hover:bg-gray-700 text-gray-200' : 'bg-neo-green border-black'} sm:hidden flex items-center justify-center w-10 h-10 border-2 shadow-neo text-sm font-bold hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed`}
+                    title="Export DOCX"
+                    aria-label="Export DOCX"
+                  >
+                    <FileDown className="w-5 h-5" aria-hidden="true" />
+                  </button>
+
+                  {/* Export Dropdown */}
+                  <div
+                    className="relative"
+                    ref={exportDropdownRef}
+                  >
+                    <button
+                      onClick={() => setIsExportDropdownOpen(!isExportDropdownOpen)}
+                      className={`${darkMode ? 'bg-gray-800 border-gray-600 hover:bg-gray-700 text-gray-200' : 'bg-neo-blue border-black'} flex items-center gap-2 px-3 sm:px-4 py-2 text-sm font-bold border-2 shadow-neo hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition-all`}
+                      aria-expanded={isExportDropdownOpen}
+                      aria-haspopup="true"
+                      aria-label={t.export}
+                    >
+                      <MoreHorizontal className="w-4 h-4" aria-hidden="true" />
+                      <span className="hidden sm:inline">{t.export}</span>
+                    </button>
+                    {isExportDropdownOpen && (
+                      <div
+                        className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-black'} absolute right-0 mt-1 w-56 border-2 shadow-neo z-50`}
+                      >
+                        <button
+                          onClick={async (e) => { e.stopPropagation(); await handleExportPDF('standard'); setIsExportDropdownOpen(false); }}
+                          className={`w-full text-left px-4 py-2 text-sm font-bold ${darkMode ? 'hover:bg-gray-700 text-gray-200' : 'hover:bg-neo-blue'}`}
+                        >
+                          {t.pdfStandard}
+                        </button>
+                        <button
+                          onClick={async (e) => { e.stopPropagation(); await handleExportPDF('high'); setIsExportDropdownOpen(false); }}
+                          className={`w-full text-left px-4 py-2 text-sm font-bold ${darkMode ? 'hover:bg-gray-700 text-gray-200' : 'hover:bg-neo-blue'}`}
+                        >
+                          {t.pdfHighRes}
+                        </button>
+                        <button
+                          onClick={async (e) => { e.stopPropagation(); await handleExportPNG(); setIsExportDropdownOpen(false); }}
+                          className={`w-full text-left px-4 py-2 text-sm font-bold ${darkMode ? 'hover:bg-gray-700 text-gray-200' : 'hover:bg-neo-blue'}`}
+                        >
+                          {t.pngExport}
+                        </button>
+                        <button
+                          onClick={async (e) => { e.stopPropagation(); await handleExportJPEG(); setIsExportDropdownOpen(false); }}
+                          className={`w-full text-left px-4 py-2 text-sm font-bold ${darkMode ? 'hover:bg-gray-700 text-gray-200' : 'hover:bg-neo-blue'}`}
+                        >
+                          {t.jpegExport}
+                        </button>
+                        <button
+                          onClick={async (e) => { e.stopPropagation(); await handleExportMarkdown(); setIsExportDropdownOpen(false); }}
+                          className={`w-full text-left px-4 py-2 text-sm font-bold ${darkMode ? 'hover:bg-gray-700 text-gray-200' : 'hover:bg-neo-blue'}`}
+                        >
+                          {t.markdownExport}
+                        </button>
+                        <button
+                          onClick={async (e) => { e.stopPropagation(); await handleExportLaTeX(); setIsExportDropdownOpen(false); }}
+                          className={`w-full text-left px-4 py-2 text-sm font-bold ${darkMode ? 'hover:bg-gray-700 text-gray-200' : 'hover:bg-neo-blue'}`}
+                        >
+                          {t.latexExport}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+              </div>
             </div>
           </div>
-        </div>
-      </nav>
+        </nav>
 
-      {/* Main Content */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:px-6 lg:px-8 py-8 flex gap-8">
+        {/* Main Content */}
+        <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:px-6 lg:px-8 py-8 flex gap-8">
 
-        {/* Editor Column */}
-        <div className={`w-full md:w-5/12 lg:w-1/3 flex-col gap-6 no-print ${showPreviewMobile ? 'hidden md:flex' : 'flex'} ${darkMode ? 'bg-gray-900' : ''}`}>
-          <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-neo-blue border-2 border-black'} shadow-neo p-4 mb-4`}>
-            <h3 className={`text-lg font-black uppercase font-display ${darkMode ? 'text-gray-200 border-gray-600' : 'border-b-2 border-black'} pb-2 mb-2`}>
-              {language === 'en'
-                ? (
-                  <><span className="ai-text-gradient">AI</span> 'Powered'</>
-                )
-                : (
-                  <>Hỗ trợ bởi <span className="ai-text-gradient">AI</span></>
-                )
-              }
-            </h3>
-            <p className={`text-sm font-medium ${darkMode ? 'text-gray-400' : 'text-gray-800'}`}>
-              {t.aiDescription}
-            </p>
+          {/* Editor Column */}
+          <div className={`w-full md:w-5/12 lg:w-1/3 flex-col gap-6 no-print ${showPreviewMobile ? 'hidden md:flex' : 'flex'} ${darkMode ? 'bg-gray-900' : ''}`}>
+            <div className={`${darkMode ? 'bg-gray-800 border-gray-700' : 'bg-neo-blue border-2 border-black'} shadow-neo p-4 mb-4`}>
+              <h3 className={`text-lg font-black uppercase font-display ${darkMode ? 'text-gray-200 border-gray-600' : 'border-b-2 border-black'} pb-2 mb-2`}>
+                {language === 'en'
+                  ? (
+                    <><span className="ai-text-gradient">AI</span> 'Powered'</>
+                  )
+                  : (
+                    <>Hỗ trợ bởi <span className="ai-text-gradient">AI</span></>
+                  )
+                }
+              </h3>
+              <p className={`text-sm font-medium ${darkMode ? 'text-gray-400' : 'text-gray-800'}`}>
+                {t.aiDescription}
+              </p>
+            </div>
+            <Editor key={editorKey} data={cvData} onChange={setCvData} language={language} darkMode={darkMode} />
           </div>
-          <Editor key={editorKey} data={cvData} onChange={setCvData} language={language} darkMode={darkMode} />
-        </div>
 
-        {/* Preview Column */}
-        <div className={`w-full md:w-7/12 lg:w-2/3 print-area ${showPreviewMobile ? 'block' : 'hidden md:block'}`}>
-           <div className="sticky top-24">
+          {/* Preview Column */}
+          <div className={`w-full md:w-7/12 lg:w-2/3 print-area ${showPreviewMobile ? 'block' : 'hidden md:block'}`}>
+            <div className="sticky top-24">
               <div className="mb-4 flex justify-between items-center md:hidden">
-                 <h2 className={`text-xl font-black uppercase font-display ${darkMode ? 'bg-gray-800 text-gray-200 border-gray-700' : 'bg-white text-black border-black'} border-2 px-2 py-1 shadow-neo`}>{t.preview}</h2>
+                <h2 className={`text-xl font-black uppercase font-display ${darkMode ? 'bg-gray-800 text-gray-200 border-gray-700' : 'bg-white text-black border-black'} border-2 px-2 py-1 shadow-neo`}>{t.preview}</h2>
               </div>
 
               <div className={`print-area ${darkMode ? 'bg-gray-900' : 'bg-white'} text-black`}>
@@ -441,11 +452,11 @@ const TemplateWrapper: React.FC = () => {
               <p className={`text-center text-xs font-bold uppercase tracking-widest ${darkMode ? 'text-gray-500 bg-gray-800/50' : 'text-gray-500 bg-white/50'} mt-8 no-print inline-block px-2 mx-auto w-full`}>
                 {t.printTip}
               </p>
-           </div>
-        </div>
+            </div>
+          </div>
 
-      </main>
-    </div>
+        </main>
+      </div>
     </>
   );
 };

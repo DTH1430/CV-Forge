@@ -15,7 +15,7 @@ interface PreviewProps {
   onChange: (data: CVData) => void;
 }
 
-export const Preview: React.FC<PreviewProps> = ({ data, language, onChange }) => {
+export const Preview = React.memo<PreviewProps>(({ data, language, onChange }) => {
   const { template } = useTemplate();
 
   // Render the appropriate template based on the selected template
@@ -36,4 +36,4 @@ export const Preview: React.FC<PreviewProps> = ({ data, language, onChange }) =>
     default:
       return <ModernTemplate data={data} language={language} onChange={onChange} />;
   }
-};
+});
