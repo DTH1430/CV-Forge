@@ -65,15 +65,37 @@ const TemplateWrapper: React.FC = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [isExportDropdownOpen, setIsExportDropdownOpen] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<'saved' | 'saving' | 'unsaved'>('saved');
   const dropdownRef = useRef<HTMLDivElement>(null);
   const exportDropdownRef = useRef<HTMLDivElement>(null);
+  const autosaveTimerRef = useRef<number | null>(null);
   // Key to force re-render of Editor on reset
   const [editorKey, setEditorKey] = useState(0);
 
   const t = translations[language];
 
   useEffect(() => {
-    localStorage.setItem('cv_data', JSON.stringify(cvData));
+    setSaveStatus('saving');
+
+    if (autosaveTimerRef.current) {
+      window.clearTimeout(autosaveTimerRef.current);
+    }
+
+    autosaveTimerRef.current = window.setTimeout(() => {
+      try {
+        localStorage.setItem('cv_data', JSON.stringify(cvData));
+        setSaveStatus('saved');
+      } catch (e) {
+        console.error('Error saving CV data', e);
+        setSaveStatus('unsaved');
+      }
+    }, 400);
+
+    return () => {
+      if (autosaveTimerRef.current) {
+        window.clearTimeout(autosaveTimerRef.current);
+      }
+    };
   }, [cvData]);
 
   // Close dropdown when clicking outside
@@ -185,6 +207,7 @@ const TemplateWrapper: React.FC = () => {
 
       // Update state to trigger re-render with empty data
       setCvData(newData);
+      setSaveStatus('saved');
 
       // Force Editor remount to ensure clean state
       setEditorKey(prev => prev + 1);
@@ -318,6 +341,10 @@ const TemplateWrapper: React.FC = () => {
                 >
                   <RefreshCcw className="w-4 h-4" aria-hidden="true" />
                 </button>
+
+                <div className={`${darkMode ? 'text-gray-400' : 'text-gray-600'} hidden lg:flex items-center text-xs font-bold uppercase tracking-widest px-2`}>
+                  {saveStatus === 'saving' ? 'Saving…' : saveStatus === 'saved' ? 'Saved' : 'Unsaved changes'}
+                </div>
 
                 {/* Dark Mode Toggle */}
                 <button
